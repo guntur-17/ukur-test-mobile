@@ -1,3 +1,5 @@
+import 'package:fake_json/presentation/pages/filtered.dart';
+import 'package:fake_json/presentation/pages/home.dart';
 import 'package:fake_json/presentation/widgets/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -29,7 +31,7 @@ class FilterPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Filter'),
+        title: Text('Filtered'),
         leading: InkWell(
             onTap: () {
               Navigator.pop(context);
@@ -54,20 +56,6 @@ class FilterPage extends StatelessWidget {
                       filter(title: 'is Active?', data: distinctStatus),
                     ],
                   ),
-                  const Spacer(),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: 50,
-                    decoration: const BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.all(Radius.circular(12))),
-                    child: Center(
-                      child: Text(
-                        'Apply',
-                        style: whiteTextStyle.copyWith(fontSize: 14),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
@@ -101,7 +89,27 @@ class FilterPage extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     return InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        List<User>? filtered = title == 'Gender'
+                            ? user
+                                .where((user) => (user.profile!.gender!
+                                    .toLowerCase()
+                                    .contains('${data[index]}'.toLowerCase())))
+                                .toList()
+                            : user
+                                .where((user) => (user.isActive!
+                                    .toString()
+                                    .toLowerCase()
+                                    .contains('${data[index]}'.toLowerCase())))
+                                .toList();
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FilteredPage(
+                                      filtered: filtered,
+                                    )));
+                      },
                       child: Container(
                         height: 70,
                         width: 90,
